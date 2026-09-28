@@ -3,6 +3,10 @@
 # submit_qwen_job.sh — SLURM batch job that starts a local vLLM server on an
 # NJIT HPC (Wulver) GPU node and runs one sample query against it.
 #
+# Fully self-contained: creates its own venv and installs vLLM on first run
+# (skipped on later runs once the venv exists), so there's no manual setup
+# step on a login node required.
+#
 # Edit the #SBATCH lines (especially --account) for your own allocation
 # before submitting, then:
 #
@@ -29,14 +33,22 @@ echo "[JOB] Starting on $(hostname)"
 date
 
 # Modules — adjust versions to whatever's available on your cluster
-# (check with `module avail CUDA` / `module avail Java` / `module spider <name>`).
+# (check with `module avail CUDA` / `module spider <name>`).
 module load easybuild
 module load CUDA/12.8.0
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-# One-time setup creates this venv — see README.md "Setup" section.
-source venv/bin/activate
+if [ ! -d venv ]; then
+    echo "[JOB] No venv found — creating one and installing vLLM (first run only)..."
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install --upgrade pip
+    pip install vllm
+else
+    echo "[JOB] Reusing existing venv"
+    source venv/bin/activate
+fi
 
 echo "[JOB] Launching vLLM server..."
 bash scripts/start_vllm_server.sh qwen32b > vllm_server.log 2>&1 &
