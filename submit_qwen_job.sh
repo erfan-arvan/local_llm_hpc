@@ -37,7 +37,7 @@ date
 module load easybuild
 module load CUDA/12.8.0
 
-cd "$(dirname "${BASH_SOURCE[0]}")"
+cd "$SLURM_SUBMIT_DIR"
 
 if [ ! -d venv ]; then
     echo "[JOB] No venv found — creating one and installing vLLM (first run only)..."
