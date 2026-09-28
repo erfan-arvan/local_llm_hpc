@@ -36,6 +36,7 @@ date
 # (check with `module avail CUDA` / `module spider <name>`).
 module load easybuild
 module load CUDA/12.8.0
+module load GCCcore/13.3.0
 module load Python/3.12.3
 
 cd "$SLURM_SUBMIT_DIR"
