@@ -41,6 +41,11 @@ module load Python/3.12.3
 
 cd "$SLURM_SUBMIT_DIR"
 
+export HF_HOME=/scratch/mjk76/ea442/local_llm_hpc_cache/huggingface
+export PIP_CACHE_DIR=/scratch/mjk76/ea442/local_llm_hpc_cache/pip
+export TMPDIR=/scratch/mjk76/ea442/local_llm_hpc_cache/tmp
+mkdir -p "$HF_HOME" "$PIP_CACHE_DIR" "$TMPDIR"
+
 if [ ! -d venv ]; then
     echo "[JOB] No venv found — creating one and installing vLLM (first run only)..."
     python3 -m venv venv
